@@ -333,4 +333,4 @@ st.download_button(
 
 st.markdown("---")
 
-st.caption("Developed for Data Visualization & Dashboard Project")
+st.caption("Developed by Syed Faran Ali | Data Visualization & Dashboard Project")

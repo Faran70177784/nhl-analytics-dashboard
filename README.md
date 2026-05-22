@@ -39,7 +39,7 @@ python -m streamlit run app.py
 
 ## Developer
 
-Developed for Data Visualization & Dashboard Project.
+Developed by Syed Faran Ali for Data Visualization & Dashboard Project.
 
 ## Live Dashboard
 
