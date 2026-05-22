@@ -162,7 +162,7 @@ st.header("Dataset Overview")
 
 with st.expander("View Dataset"):
 
-    st.dataframe(filtered_df.head(20))
+    st.dataframe(filtered_df.head(10))
 
 # =========================================
 # FIRST ROW OF CHARTS
