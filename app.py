@@ -257,11 +257,22 @@ with col2:
 
     st.pyplot(fig)
 
-    st.info(f"""
+    total_goals = filtered_df['I_F_goals'].sum()
+
+total_shots = filtered_df['I_F_shotsOnGoal'].sum()
+
+if total_shots > 0:
+    goal_probability = (total_goals / total_shots) * 100
+else:
+    goal_probability = 0
+
+st.info(f"""
 Strong relationship between shots and goals.
 
 Max Goals: {filtered_df['I_F_goals'].max()}
 Max Shots: {filtered_df['I_F_shotsOnGoal'].max()}
+
+Goal Scoring Efficiency: {goal_probability:.2f}%
 """)
 
 # =========================================
