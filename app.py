@@ -19,6 +19,11 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+section[data-testid="stSidebar"] {
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB;
+}
+
 .main {
     background-color: #F5F7FA;
 }
@@ -105,45 +110,128 @@ team participation, and scoring statistics.
 """)
 
 # =========================================
-# SIDEBAR FILTERS
+# PROFESSIONAL SIDEBAR
 # =========================================
 
-st.sidebar.header("Dashboard Filters")
+st.sidebar.markdown("## Dashboard Controls")
 
-selected_team = st.sidebar.multiselect(
-    "Select Team",
-    options=df["team"].unique(),
-    default=df["team"].unique()
-)
+# =========================================
+# DATASET STATUS
+# =========================================
 
-selected_position = st.sidebar.multiselect(
-    "Select Position",
-    options=df["position"].unique(),
-    default=df["position"].unique()
-)
+if uploaded_file is not None:
+    st.sidebar.success("Custom Dataset Loaded")
 
-selected_season = st.sidebar.multiselect(
-    "Select Season",
-    options=sorted(df["season"].unique()),
-    default=sorted(df["season"].unique())
-)
+else:
+    st.sidebar.info("Default NHL Dataset Loaded")
 
-goal_range = st.sidebar.slider(
-    "Goals Range",
-    int(df["I_F_goals"].min()),
-    int(df["I_F_goals"].max()),
-    (
-        int(df["I_F_goals"].min()),
-        int(df["I_F_goals"].max())
+st.sidebar.markdown("---")
+
+# =========================================
+# TEAM FILTER
+# =========================================
+
+with st.sidebar.expander(
+    "Team Filters",
+    expanded=True
+):
+
+    selected_team = st.multiselect(
+        "Select Team",
+        options=df["team"].unique(),
+        default=df["team"].unique()
     )
+
+# =========================================
+# POSITION FILTER
+# =========================================
+
+with st.sidebar.expander(
+    "Position Filters",
+    expanded=False
+):
+
+    selected_position = st.multiselect(
+        "Select Position",
+        options=df["position"].unique(),
+        default=df["position"].unique()
+    )
+
+# =========================================
+# SEASON FILTER
+# =========================================
+
+with st.sidebar.expander(
+    "Season Filters",
+    expanded=False
+):
+
+    selected_season = st.multiselect(
+        "Select Season",
+        options=sorted(df["season"].unique()),
+        default=sorted(df["season"].unique())
+    )
+
+# =========================================
+# GOALS FILTER
+# =========================================
+
+with st.sidebar.expander(
+    "Goals Filter",
+    expanded=False
+):
+
+    goal_range = st.slider(
+        "Goals Range",
+        int(df["I_F_goals"].min()),
+        int(df["I_F_goals"].max()),
+        (
+            int(df["I_F_goals"].min()),
+            int(df["I_F_goals"].max())
+        )
+    )
+
+# =========================================
+# PLAYER SEARCH
+# =========================================
+
+with st.sidebar.expander(
+    "Player Search",
+    expanded=True
+):
+
+    player_search = st.text_input(
+        "Search Player Name or Player ID"
+    )
+
+st.sidebar.markdown("---")
+
+# =========================================
+# ACTIVE FILTER SUMMARY
+# =========================================
+
+st.sidebar.markdown("### Active Filters")
+
+st.sidebar.write(
+    f"Teams Selected: {len(selected_team)}"
+)
+
+st.sidebar.write(
+    f"Positions Selected: {len(selected_position)}"
+)
+
+st.sidebar.write(
+    f"Seasons Selected: {len(selected_season)}"
 )
 
 # =========================================
-# SEARCH BOX
+# SIDEBAR INFORMATION
 # =========================================
 
-player_search = st.sidebar.text_input(
-    "Search Player Name or Player ID"
+st.sidebar.markdown("---")
+
+st.sidebar.caption(
+    "Adjust filters to explore NHL player performance dynamically."
 )
 
 st.sidebar.markdown("---")
@@ -157,6 +245,10 @@ Technologies Used:
 - Streamlit
 - Matplotlib
 - Seaborn
+""")
+
+st.sidebar.caption("""
+Developed by Syed Faran Ali
 """)
 
 # =========================================
@@ -190,6 +282,16 @@ if player_search:
             na=False
         )
     ]
+
+# =========================================
+# FILTERED RECORDS
+# =========================================
+
+st.sidebar.markdown("---")
+
+st.sidebar.success(
+    f"Filtered Records: {filtered_df.shape[0]}"
+)
 
 # =========================================
 # DATASET SUMMARY
@@ -293,7 +395,7 @@ Strong relationship between shots and goals.
 Max Goals: {filtered_df['I_F_goals'].max()}
 Max Shots: {filtered_df['I_F_shotsOnGoal'].max()}
 
-Goal Scoring Efficiency: {goal_probability:.2f}%
+Goal Scoring Efficiency:{goal_probability:.2f}%
 """)
 
 st.markdown("<br>", unsafe_allow_html=True)
