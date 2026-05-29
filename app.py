@@ -48,7 +48,16 @@ h2, h3 {
 # LOAD DATA
 # =========================================
 
-df = pd.read_csv("data/skaters.csv")
+uploaded_file = st.sidebar.file_uploader(
+    "Upload CSV File",
+    type=["csv"]
+)
+
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+
+else:
+    df = pd.read_csv("data/skaters.csv")
 
 # =========================================
 # TITLE
@@ -78,13 +87,20 @@ col1.metric("Total Players", df["name"].nunique())
 
 col2.metric("Total Teams", df["team"].nunique())
 
-col3.metric("Average Goals", round(df["I_F_goals"].mean(), 2))
+if "I_F_goals" in df.columns:
+    col3.metric(
+        "Average Goals",
+        round(df["I_F_goals"].mean(), 2)
+    )
 
-col4.metric("Highest Goals", int(df["I_F_goals"].max()))
+    col4.metric(
+        "Highest Goals",
+        int(df["I_F_goals"].max())
+    )
 
 st.markdown("""
-These KPI metrics provide a quick overview of player performance,
-team participation, and scoring trends in the selected NHL dataset.
+Dashboard KPIs provide an overview of player performance,
+team participation, and scoring statistics.
 """)
 
 # =========================================
@@ -190,6 +206,10 @@ with st.expander("View Dataset"):
 
 col1, col2 = st.columns(2)
 
+# =========================================
+# TOP GOAL SCORERS
+# =========================================
+
 with col1:
 
     st.subheader("Top Goal Scorers")
@@ -209,11 +229,16 @@ with col1:
 
     st.pyplot(fig)
 
-    st.info("""
-    This bar chart displays the top goal scorers based on the selected filters.
-    It helps identify the most offensively impactful players in the dataset.
-    Higher bars indicate stronger goal-scoring performance.
-    """)
+    st.info(f"""
+Top scoring players based on selected filters.
+
+Highest Goals: {top_players.max()}
+Players Displayed: {len(top_players)}
+""")
+
+# =========================================
+# SHOTS VS GOALS
+# =========================================
 
 with col2:
 
@@ -232,17 +257,22 @@ with col2:
 
     st.pyplot(fig)
 
-    st.info("""
-    This scatter plot analyzes the relationship between shots and goals.
-    Players with higher shots generally tend to score more goals.
-    It helps evaluate shooting efficiency and offensive consistency.
-    """)
+    st.info(f"""
+Strong relationship between shots and goals.
+
+Max Goals: {filtered_df['I_F_goals'].max()}
+Max Shots: {filtered_df['I_F_shotsOnGoal'].max()}
+""")
 
 # =========================================
 # SECOND ROW OF CHARTS
 # =========================================
 
 col1, col2 = st.columns(2)
+
+# =========================================
+# HEATMAP
+# =========================================
 
 with col1:
 
@@ -271,10 +301,14 @@ with col1:
     st.pyplot(fig)
 
     st.info("""
-    The heatmap visualizes correlations between numerical features.
-    Positive correlations indicate variables that increase together,
-    while negative correlations represent inverse relationships.
-    """)
+Heatmap shows relationships between numerical variables.
+
+Higher values indicate stronger correlations.
+""")
+
+# =========================================
+# POSITION DISTRIBUTION
+# =========================================
 
 with col2:
 
@@ -293,16 +327,21 @@ with col2:
 
     st.pyplot(fig)
 
-    st.info("""
-    This pie chart shows the distribution of player positions in the dataset.
-    It provides an overview of positional representation across NHL players.
-    """)
+    st.info(f"""
+Distribution of player positions in dataset.
+
+Total Positions: {filtered_df['position'].nunique()}
+""")
 
 # =========================================
 # THIRD ROW OF CHARTS
 # =========================================
 
 col1, col2 = st.columns(2)
+
+# =========================================
+# TOP TEAMS
+# =========================================
 
 with col1:
 
@@ -321,10 +360,15 @@ with col1:
 
     st.pyplot(fig)
 
-    st.info("""
-    This chart compares the top-performing NHL teams based on total points.
-    It helps identify teams with stronger overall offensive contributions.
-    """)
+    st.info(f"""
+Top NHL teams based on total points.
+
+Highest Team Points: {top_teams.max()}
+""")
+
+# =========================================
+# GOALS DISTRIBUTION
+# =========================================
 
 with col2:
 
@@ -343,10 +387,11 @@ with col2:
 
     st.pyplot(fig)
 
-    st.info("""
-    The histogram shows the distribution of goals scored by players.
-    It helps identify common scoring ranges and detect scoring outliers.
-    """)
+    st.info(f"""
+Distribution of goals scored by players.
+
+Average Goals: {round(filtered_df['I_F_goals'].mean(), 2)}
+""")
 
 # =========================================
 # FINAL CHART
@@ -367,9 +412,10 @@ ax.set_title("Goals by Position")
 
 st.pyplot(fig)
 
-st.info("""
-This boxplot compares goal distributions across player positions.
-It highlights median performance, variability, and outliers.
+st.info(f"""
+Goal comparison across player positions.
+
+Highest Goals: {filtered_df['I_F_goals'].max()}
 """)
 
 # =========================================
