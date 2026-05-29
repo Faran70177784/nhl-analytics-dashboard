@@ -88,6 +88,7 @@ col1.metric("Total Players", df["name"].nunique())
 col2.metric("Total Teams", df["team"].nunique())
 
 if "I_F_goals" in df.columns:
+
     col3.metric(
         "Average Goals",
         round(df["I_F_goals"].mean(), 2)
@@ -191,6 +192,22 @@ if player_search:
     ]
 
 # =========================================
+# DATASET SUMMARY
+# =========================================
+
+st.subheader("Dataset Summary")
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("Rows", df.shape[0])
+
+col2.metric("Columns", df.shape[1])
+
+col3.metric("Missing Values", df.isnull().sum().sum())
+
+col4.metric("Duplicate Rows", df.duplicated().sum())
+
+# =========================================
 # DATASET OVERVIEW
 # =========================================
 
@@ -212,24 +229,26 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.subheader("Top Goal Scorers")
+    with st.container(border=True):
 
-    top_players = filtered_df.groupby("name")["I_F_goals"] \
-                             .sum() \
-                             .sort_values(ascending=False) \
-                             .head(10)
+        st.subheader("Top Goal Scorers")
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        top_players = filtered_df.groupby("name")["I_F_goals"] \
+                                 .sum() \
+                                 .sort_values(ascending=False) \
+                                 .head(10)
 
-    top_players.plot(kind='bar', ax=ax)
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    ax.set_title("Top 10 Goal Scorers")
-    ax.set_xlabel("Player")
-    ax.set_ylabel("Goals")
+        top_players.plot(kind='bar', ax=ax)
 
-    st.pyplot(fig)
+        ax.set_title("Top 10 Goal Scorers")
+        ax.set_xlabel("Player")
+        ax.set_ylabel("Goals")
 
-    st.info(f"""
+        st.pyplot(fig)
+
+        st.info(f"""
 Top scoring players based on selected filters.
 
 Highest Goals: {top_players.max()}
@@ -242,31 +261,33 @@ Players Displayed: {len(top_players)}
 
 with col2:
 
-    st.subheader("Shots vs Goals")
+    with st.container(border=True):
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        st.subheader("Shots vs Goals")
 
-    sns.scatterplot(
-        data=filtered_df,
-        x="I_F_shotsOnGoal",
-        y="I_F_goals",
-        ax=ax
-    )
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    ax.set_title("Shots vs Goals")
+        sns.scatterplot(
+            data=filtered_df,
+            x="I_F_shotsOnGoal",
+            y="I_F_goals",
+            ax=ax
+        )
 
-    st.pyplot(fig)
+        ax.set_title("Shots vs Goals")
 
-    total_goals = filtered_df['I_F_goals'].sum()
+        st.pyplot(fig)
 
-total_shots = filtered_df['I_F_shotsOnGoal'].sum()
+        total_goals = filtered_df['I_F_goals'].sum()
 
-if total_shots > 0:
-    goal_probability = (total_goals / total_shots) * 100
-else:
-    goal_probability = 0
+        total_shots = filtered_df['I_F_shotsOnGoal'].sum()
 
-st.info(f"""
+        if total_shots > 0:
+            goal_probability = (total_goals / total_shots) * 100
+        else:
+            goal_probability = 0
+
+        st.info(f"""
 Strong relationship between shots and goals.
 
 Max Goals: {filtered_df['I_F_goals'].max()}
@@ -274,6 +295,8 @@ Max Shots: {filtered_df['I_F_shotsOnGoal'].max()}
 
 Goal Scoring Efficiency: {goal_probability:.2f}%
 """)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # =========================================
 # SECOND ROW OF CHARTS
@@ -287,31 +310,33 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.subheader("Correlation Heatmap")
+    with st.container(border=True):
 
-    selected = filtered_df[[
-        "I_F_goals",
-        "I_F_points",
-        "I_F_shotsOnGoal",
-        "I_F_hits",
-        "gameScore",
-        "games_played"
-    ]]
+        st.subheader("Correlation Heatmap")
 
-    corr = selected.corr()
+        selected = filtered_df[[
+            "I_F_goals",
+            "I_F_points",
+            "I_F_shotsOnGoal",
+            "I_F_hits",
+            "gameScore",
+            "games_played"
+        ]]
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        corr = selected.corr()
 
-    sns.heatmap(
-        corr,
-        annot=True,
-        cmap="coolwarm",
-        ax=ax
-    )
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    st.pyplot(fig)
+        sns.heatmap(
+            corr,
+            annot=True,
+            cmap="coolwarm",
+            ax=ax
+        )
 
-    st.info("""
+        st.pyplot(fig)
+
+        st.info("""
 Heatmap shows relationships between numerical variables.
 
 Higher values indicate stronger correlations.
@@ -323,26 +348,30 @@ Higher values indicate stronger correlations.
 
 with col2:
 
-    st.subheader("Position Distribution")
+    with st.container(border=True):
 
-    position_counts = filtered_df["position"].value_counts()
+        st.subheader("Position Distribution")
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        position_counts = filtered_df["position"].value_counts()
 
-    position_counts.plot.pie(
-        autopct='%1.1f%%',
-        ax=ax
-    )
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    ax.set_ylabel("")
+        position_counts.plot.pie(
+            autopct='%1.1f%%',
+            ax=ax
+        )
 
-    st.pyplot(fig)
+        ax.set_ylabel("")
 
-    st.info(f"""
+        st.pyplot(fig)
+
+        st.info(f"""
 Distribution of player positions in dataset.
 
 Total Positions: {filtered_df['position'].nunique()}
 """)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # =========================================
 # THIRD ROW OF CHARTS
@@ -356,22 +385,24 @@ col1, col2 = st.columns(2)
 
 with col1:
 
-    st.subheader("Top Teams by Points")
+    with st.container(border=True):
 
-    top_teams = filtered_df.groupby("team")["I_F_points"] \
-                           .sum() \
-                           .sort_values(ascending=False) \
-                           .head(10)
+        st.subheader("Top Teams by Points")
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        top_teams = filtered_df.groupby("team")["I_F_points"] \
+                               .sum() \
+                               .sort_values(ascending=False) \
+                               .head(10)
 
-    top_teams.plot(kind='bar', ax=ax)
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    ax.set_title("Top Teams by Points")
+        top_teams.plot(kind='bar', ax=ax)
 
-    st.pyplot(fig)
+        ax.set_title("Top Teams by Points")
 
-    st.info(f"""
+        st.pyplot(fig)
+
+        st.info(f"""
 Top NHL teams based on total points.
 
 Highest Team Points: {top_teams.max()}
@@ -383,55 +414,79 @@ Highest Team Points: {top_teams.max()}
 
 with col2:
 
-    st.subheader("Goals Distribution")
+    with st.container(border=True):
 
-    fig, ax = plt.subplots(figsize=(7,5))
+        st.subheader("Goals Distribution")
 
-    sns.histplot(
-        filtered_df["I_F_goals"],
-        bins=20,
-        kde=True,
-        ax=ax
-    )
+        fig, ax = plt.subplots(figsize=(8,5))
 
-    ax.set_title("Goals Distribution")
+        sns.histplot(
+            filtered_df["I_F_goals"],
+            bins=20,
+            kde=True,
+            ax=ax
+        )
 
-    st.pyplot(fig)
+        ax.set_title("Goals Distribution")
 
-    st.info(f"""
+        st.pyplot(fig)
+
+        st.info(f"""
 Distribution of goals scored by players.
 
 Average Goals: {round(filtered_df['I_F_goals'].mean(), 2)}
 """)
 
+st.markdown("<br>", unsafe_allow_html=True)
+
 # =========================================
 # FINAL CHART
 # =========================================
 
-st.subheader("Goals by Position")
+with st.container(border=True):
 
-fig, ax = plt.subplots(figsize=(10,5))
+    st.subheader("Goals by Position")
 
-sns.boxplot(
-    data=filtered_df,
-    x="position",
-    y="I_F_goals",
-    ax=ax
-)
+    fig, ax = plt.subplots(figsize=(10,5))
 
-ax.set_title("Goals by Position")
+    sns.boxplot(
+        data=filtered_df,
+        x="position",
+        y="I_F_goals",
+        ax=ax
+    )
 
-st.pyplot(fig)
+    ax.set_title("Goals by Position")
 
-st.info(f"""
+    st.pyplot(fig)
+
+    st.info(f"""
 Goal comparison across player positions.
 
 Highest Goals: {filtered_df['I_F_goals'].max()}
 """)
 
 # =========================================
+# TEAM PERFORMANCE SUMMARY
+# =========================================
+
+st.subheader("Team Performance Summary")
+
+team_summary = filtered_df.groupby("team")[[
+    "I_F_goals",
+    "I_F_points",
+    "I_F_shotsOnGoal"
+]].mean().round(2)
+
+st.dataframe(team_summary)
+
+# =========================================
 # DOWNLOAD BUTTON
 # =========================================
+
+st.subheader("Download Filtered Dataset")
+
+st.write(f"Filtered Records: {filtered_df.shape[0]}")
 
 csv = filtered_df.to_csv(index=False).encode('utf-8')
 
