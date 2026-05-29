@@ -19,14 +19,20 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* SIDEBAR */
+
 section[data-testid="stSidebar"] {
-    background-color: #FFFFFF;
-    border-right: 1px solid #E5E7EB;
+    background-color: #E5E7EB;
+    border-right: 1px solid #CBD5E1;
 }
 
+/* MAIN BACKGROUND */
+
 .main {
-    background-color: #F5F7FA;
+    background-color: #F3F4F6;
 }
+
+/* TITLES */
 
 h1 {
     color: #111827;
@@ -38,12 +44,27 @@ h2, h3 {
     color: #1F2937;
 }
 
+/* KPI CARDS */
+
 [data-testid="metric-container"] {
     background-color: white;
     border: 1px solid #E5E7EB;
     padding: 15px;
     border-radius: 15px;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.08);
+}
+
+/* EXPANDERS */
+
+.streamlit-expanderHeader {
+    font-weight: 600;
+}
+
+/* DOWNLOAD BUTTON */
+
+.stDownloadButton button {
+    border-radius: 10px;
+    border: 1px solid #D1D5DB;
 }
 
 </style>
